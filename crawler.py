@@ -5,8 +5,7 @@ import asyncio
 import logging
 import random
 from requests.adapters import HTTPAdapter
-from requests.packages.urllib3.util.retry import Retry
-
+from urllib3.util.retry import Retry
 class Crawler:
     # Initialize the Crawler
     def __init__(self):
@@ -109,8 +108,6 @@ class Crawler:
             logging.error(f"Too many redirects for URL: {url}")
         except Exception as e:
             logging.error(f"An error occurred while crawling {url}: {str(e)}")
-
-
 
     # Extract URLs from a sitemap
     def get_urls_from_sitemap(self, sitemap_xml):
