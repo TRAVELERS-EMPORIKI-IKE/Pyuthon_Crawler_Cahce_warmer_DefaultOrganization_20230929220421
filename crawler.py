@@ -17,6 +17,19 @@ class Crawler:
         self.crawling_rate = int(self.config.get('Crawler', 'crawling_rate'))
         self.desktop_agents = self.config.get('UserAgents', 'desktop_agents').split('|')
         self.mobile_agents = self.config.get('UserAgents', 'mobile_agents').split('|')
+        
+        # Initialize index for user agents and read the mode from the config
+        self.user_agent_index = 0
+        self.user_agent_mode = int(self.config.get('Crawler', 'user_agent_mode'))
+        self.user_agent_type = self.config.get('Crawler', 'user_agent')
+
+        # Choose user agents based on the type
+        if self.user_agent_type == "desktop":
+            self.all_user_agents = self.desktop_agents
+        elif self.user_agent_type == "mobile":
+            self.all_user_agents = self.mobile_agents
+        else:  # "desktop and mobile"
+            self.all_user_agents = self.desktop_agents + self.mobile_agents
 
     # Main function to start the crawler
     def start(self):
@@ -90,10 +103,33 @@ class Crawler:
                 logging.error(f"Error occurred while parsing sitemap: {str(e)}")
         return urls
 
-    # Randomly pick a user agent for crawling
+    # Get a user agent based on the mode
     def get_random_user_agent(self):
-        user_agents = self.desktop_agents + self.mobile_agents
-        return random.choice(user_agents)
+        if self.user_agent_mode == 1:
+            # Sequential mode
+            user_agent = self.all_user_agents[self.user_agent_index]
+            
+            # Increment the index for the next call
+            self.user_agent_index = (self.user_agent_index + 1) % len(self.all_user_agents)
+        else:
+            # Random mode
+            user_agent = random.choice(self.all_user_agents)
+        
+        return user_agent
+
+    # Get a user agent based on the mode
+    def get_random_user_agent(self):
+        if self.user_agent_mode == 1:
+            # Sequential mode
+            user_agent = self.all_user_agents[self.user_agent_index]
+            
+            # Increment the index for the next call
+            self.user_agent_index = (self.user_agent_index + 1) % len(self.all_user_agents)
+        else:
+            # Random mode
+            user_agent = random.choice(self.all_user_agents)
+        
+        return user_agent
 
 # Initialize and start the Crawler
 if __name__ == "__main__":
