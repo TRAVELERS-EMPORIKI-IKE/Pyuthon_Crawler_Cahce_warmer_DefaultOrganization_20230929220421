@@ -105,7 +105,7 @@ class Crawler:
             response = session.get(url, headers=headers, allow_redirects=False)
             
             logging.info(f"Crawled URL: {url}, Status Code: {response.status_code}")
-            
+            print(f"Crawled URL: {url}, Status Code: {response.status_code}")
         except requests.exceptions.TooManyRedirects:
             logging.error(f"Too many redirects for URL: {url}")
         except Exception as e:
