@@ -87,10 +87,13 @@ class Crawler:
         try:
             headers = {'User-Agent': self.get_random_user_agent()}
             await asyncio.sleep(1 / self.crawling_rate)
-            response = requests.get(url, headers=headers, allow_redirects=False)
+            response = requests.get(url, headers=headers, max_redirects=50)
             logging.info(f"Crawled URL: {url}, Status Code: {response.status_code}")
         except requests.exceptions.TooManyRedirects:
             logging.error(f"Too many redirects for URL: {url}")
+        except Exception as e:
+            logging.error(f"An error occurred while crawling {url}: {str(e)}")
+
 
 
     # Extract URLs from a sitemap
