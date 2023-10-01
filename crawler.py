@@ -20,9 +20,9 @@ class Crawler:
         
         # Initialize index for user agents and read the mode from the config
         self.user_agent_index = 0
-        self.user_agent_mode = int(self.config.get('Crawler', 'user_agent_mode'))
-        self.user_agent_type = self.config.get('Crawler', 'user_agent')
-
+        self.user_agent_mode = int(self.config.get('Crawler', 'user_agent_mode').split(';')[0].strip())
+        self.user_agent_type = self.config.get('Crawler', 'user_agent').split(';')[0].strip()
+        
         # Choose user agents based on the type
         if self.user_agent_type == "desktop":
             self.all_user_agents = self.desktop_agents
