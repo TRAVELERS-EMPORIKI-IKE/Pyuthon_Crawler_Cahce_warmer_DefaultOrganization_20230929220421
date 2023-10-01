@@ -4,6 +4,8 @@ import xml.etree.ElementTree as ET
 import asyncio
 import logging
 import random
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
 
 class Crawler:
     # Initialize the Crawler
@@ -87,7 +89,21 @@ class Crawler:
         try:
             headers = {'User-Agent': self.get_random_user_agent()}
             await asyncio.sleep(1 / self.crawling_rate)
-            response = requests.get(url, headers=headers, max_redirects=50)
+            
+            # Create a Session
+            session = requests.Session()
+            
+            # Create a Retry object
+            retries = Retry(total=5,
+                            backoff_factor=0.1,
+                            status_forcelist=[ 500, 502, 503, 504 ])
+            
+            # Mount it for both http and https usage
+            session.mount('http://', HTTPAdapter(max_retries=retries))
+            session.mount('https://', HTTPAdapter(max_retries=retries))
+            
+            response = session.get(url, headers=headers)
+            
             logging.info(f"Crawled URL: {url}, Status Code: {response.status_code}")
         except requests.exceptions.TooManyRedirects:
             logging.error(f"Too many redirects for URL: {url}")
