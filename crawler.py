@@ -84,10 +84,14 @@ class Crawler:
 
     # Asynchronous function to crawl a single URL
     async def crawl_url(self, url):
-        headers = {'User-Agent': self.get_random_user_agent()}
-        await asyncio.sleep(1 / self.crawling_rate)
-        response = requests.get(url, headers=headers)
-        logging.info(f"Crawled URL: {url}, Status Code: {response.status_code}")
+        try:
+            headers = {'User-Agent': self.get_random_user_agent()}
+            await asyncio.sleep(1 / self.crawling_rate)
+            response = requests.get(url, headers=headers, allow_redirects=False)
+            logging.info(f"Crawled URL: {url}, Status Code: {response.status_code}")
+        except requests.exceptions.TooManyRedirects:
+            logging.error(f"Too many redirects for URL: {url}")
+
 
     # Extract URLs from a sitemap
     def get_urls_from_sitemap(self, sitemap_xml):
