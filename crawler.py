@@ -101,13 +101,16 @@ class Crawler:
             session.mount('http://', HTTPAdapter(max_retries=retries))
             session.mount('https://', HTTPAdapter(max_retries=retries))
             
-            response = session.get(url, headers=headers)
+            # Disable redirects by setting allow_redirects to False
+            response = session.get(url, headers=headers, allow_redirects=False)
             
             logging.info(f"Crawled URL: {url}, Status Code: {response.status_code}")
+            
         except requests.exceptions.TooManyRedirects:
             logging.error(f"Too many redirects for URL: {url}")
         except Exception as e:
             logging.error(f"An error occurred while crawling {url}: {str(e)}")
+
 
     # Extract URLs from a sitemap
     def get_urls_from_sitemap(self, sitemap_xml):
